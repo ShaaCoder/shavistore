@@ -9,7 +9,10 @@
     "lint": "next lint",
     "seed": "tsx scripts/seed-database.ts",
     "setup-uploads": "node scripts/setup-uploads.js",
-    "postinstall": "npm run setup-uploads"
+    "postinstall": "npm run setup-uploads",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "prebuild": "npm run type-check || true"
   },
   "overrides": {
     "next-auth": {

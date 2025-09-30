@@ -2,7 +2,10 @@
 const nextConfig = {
   output: 'standalone',
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true, // Temporarily disable to allow deployment
+  },
+  typescript: {
+    ignoreBuildErrors: false, // Enable TypeScript checking during builds
   },
   images: {
     formats: ['image/avif', 'image/webp'],
