@@ -158,7 +158,7 @@ export async function GET(
       })),
       
       // Featured products from this category
-      featuredProducts: featuredProducts.map(product => ({
+      featuredProducts: featuredProducts.map((product: any) => ({
         id: String(product._id),
         name: product.name,
         slug: product.slug,

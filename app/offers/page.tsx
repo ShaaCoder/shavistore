@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   keywords: ['offers', 'deals', 'discounts', 'coupons', 'promotions', 'beauty deals'],
 };
 
+// Force this page to be dynamically rendered
+export const dynamic = 'force-dynamic';
+
 interface Offer {
   id: string;
   title: string;

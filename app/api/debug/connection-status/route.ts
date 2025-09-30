@@ -18,6 +18,9 @@ import {
   handleApiError,
 } from '@/lib/api-helpers';
 
+// Force this route to be dynamic
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
 
@@ -144,11 +147,11 @@ export async function GET(request: NextRequest) {
       NODE_ENV: process.env.NODE_ENV,
     };
 
-    // Check rate limiting from headers
+    // Check rate limiting from headers (static for build)
     const rateLimitHeaders = {
-      'X-RateLimit-Limit': request.headers.get('X-RateLimit-Limit'),
-      'X-RateLimit-Remaining': request.headers.get('X-RateLimit-Remaining'),
-      'X-RateLimit-Reset': request.headers.get('X-RateLimit-Reset'),
+      'X-RateLimit-Limit': null,
+      'X-RateLimit-Remaining': null,
+      'X-RateLimit-Reset': null,
     };
 
     // Memory usage

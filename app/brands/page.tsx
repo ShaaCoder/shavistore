@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   keywords: ['brands', 'beauty brands', 'personal care', 'authentic products', 'premium brands'],
 };
 
+// Force this page to be dynamically rendered
+export const dynamic = 'force-dynamic';
+
 interface Brand {
   id: string;
   name: string;

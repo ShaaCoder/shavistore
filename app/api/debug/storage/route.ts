@@ -3,6 +3,9 @@ import { existsSync } from 'fs';
 import { mkdir, writeFile, unlink } from 'fs/promises';
 import path from 'path';
 
+// Force this route to be dynamic
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const results: {
     platform: string;
