@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     .populate('category', 'name slug description image')
     .sort({ createdAt: -1 })
     .limit(8)
-    .lean();
+    .lean() as any[];
 
     // If no featured products, get latest active products
     if (products.length === 0) {
@@ -76,11 +76,11 @@ export async function GET(request: NextRequest) {
       .populate('category', 'name slug description image')
       .sort({ createdAt: -1 })
       .limit(8)
-      .lean();
+      .lean() as any[];
     }
 
     // Format response data
-    const formattedProducts = products.map(product => ({
+    const formattedProducts = products.map((product: any) => ({
       id: product._id.toString(),
       name: product.name,
       slug: product.slug,

@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     const recentOrders = await Order.find({})
       .sort({ createdAt: -1 })
       .limit(5)
-      .lean();
+      .lean() as any[];
 
     console.log('🐛 Debug: Found orders:', recentOrders.length);
 

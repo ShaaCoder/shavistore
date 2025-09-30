@@ -69,7 +69,7 @@ export async function GET(
       isActive: true 
     })
     .populate('category', 'name slug description image seoTitle seoDescription seoKeywords')
-    .lean();
+    .lean() as any;
 
     if (!product) {
       return createErrorResponse(

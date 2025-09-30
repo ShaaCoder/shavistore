@@ -76,7 +76,7 @@ export async function GET(
       path: 'parentCategory',
       select: 'name slug'
     })
-    .lean();
+    .lean() as any;
 
     if (!category) {
       return createErrorResponse(
@@ -100,7 +100,7 @@ export async function GET(
     })
     .select('name slug price originalPrice images brand rating reviewCount')
     .limit(8)
-    .lean();
+    .lean() as any[];
 
     // Generate breadcrumb data
     const breadcrumbs = [

@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Find order by session ID
-    const order = await Order.findOne({ stripeSessionId: sessionId }).lean();
+    const order = await Order.findOne({ stripeSessionId: sessionId }).lean() as any;
     
     if (!order) {
       return createErrorResponse(

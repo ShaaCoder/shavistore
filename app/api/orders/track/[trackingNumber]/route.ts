@@ -69,7 +69,7 @@ async function getAuthenticatedTracking(
     // Find order by tracking number or generate mock data
     let order = await Order.findOne({ 
       trackingNumber: trackingNumber.toUpperCase() 
-    }).lean();
+    }).lean() as any;
     
     // If no order found and it's a mock tracking number, generate mock data
     if (!order && trackingNumber.toUpperCase().startsWith('MOCK')) {
@@ -123,7 +123,7 @@ async function getPublicTracking(
         await connectDB();
         order = await Order.findOne({ 
           trackingNumber: trackingNumber.toUpperCase() 
-        }).lean();
+        }).lean() as any;
       }
       
       if (!order) {
@@ -147,7 +147,7 @@ async function getPublicTracking(
         order = await Order.findOne({ 
           orderNumber: orderNumber,
           'shippingAddress.phone': phone
-        }).lean();
+        }).lean() as any;
       }
       
       if (!order) {

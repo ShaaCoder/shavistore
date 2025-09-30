@@ -82,14 +82,14 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .lean();
+      .lean() as any[];
     const totalOffers = await Offer.countDocuments(query);
 
     // Get stats
     const [activeCount, expiredCount, totalCount] = await Promise.all([
-      (Offer as any).findActive().countDocuments(),
-      Offer.countDocuments({ isActive: false }),
-      Offer.countDocuments()
+      (Offer as any).findActive().countDocuments() as Promise<number>,
+      Offer.countDocuments({ isActive: false }) as Promise<number>,
+      Offer.countDocuments() as Promise<number>
     ]);
 
     // Add virtual fields manually since we're using lean()
