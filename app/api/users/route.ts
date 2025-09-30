@@ -72,8 +72,8 @@ export async function GET(request: NextRequest) {
         .sort(sortParams)
         .skip(skip)
         .limit(limit)
-        .lean(),
-      User.countDocuments(query)
+        .lean() as Promise<any[]>,
+      User.countDocuments(query) as Promise<number>
     ]);
 
     // Create pagination info

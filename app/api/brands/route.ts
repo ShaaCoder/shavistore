@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       { $match: { isActive: true, brand: { $exists: true, $ne: '' } } },
       { $group: { _id: '$brand', productCount: { $sum: 1 } } },
       { $sort: { _id: 1 } }
-    ]);
+    ]) as any[];
 
     // Create a map of existing brands for quick lookup
     const existingBrandNames = new Set(brandsFromModel.map(b => b.name.toLowerCase()));

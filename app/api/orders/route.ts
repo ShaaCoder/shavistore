@@ -62,8 +62,8 @@ export async function GET(request: NextRequest) {
     }
 
       const [orders, total] = await Promise.all([
-        Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-        Order.countDocuments(filter)
+        Order.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean() as Promise<any[]>,
+        Order.countDocuments(filter) as Promise<number>
       ]);
 
       const formattedOrders = orders.map((order: any) => ({

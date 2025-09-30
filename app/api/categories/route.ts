@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     // Fetch categories based on query
     const categories = await Category.find(query)
       .sort({ name: 1 })
-      .lean();
+      .lean() as any[];
 
     // Helper: get a category's own ID plus all descendant category IDs
     const getCategoryAndDescendantIds = async (rootId: any) => {
