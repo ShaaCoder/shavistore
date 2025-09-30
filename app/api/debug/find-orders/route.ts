@@ -31,8 +31,24 @@ export async function GET(request: NextRequest) {
 
     console.log('🐛 Debug: Found orders:', recentOrders.length);
 
-    const ordersWithDetails = await Promise.all(
-      recentOrders.map(async (order) => {
+    // Fix for "Expression produces a union type that is too complex to represent"
+    // by explicitly typing the result array
+    const ordersWithDetails: Array<{
+      id: string;
+      orderNumber: string;
+      status: string;
+      paymentStatus: string;
+      total: number;
+      createdAt: Date;
+      customer: { name: string; email: string } | null;
+      emailStatus: {
+        confirmationEmailSent: boolean;
+        confirmationEmailSentAt: Date | null;
+        shippingEmailSent: boolean;
+        shippingEmailSentAt: Date | null;
+      };
+    }> = await Promise.all(
+      recentOrders.map(async (order: any) => {
         // Get customer details
         const customer = await User.findById(order.userId).select('name email');
         
