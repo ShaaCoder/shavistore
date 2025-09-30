@@ -12,7 +12,7 @@
     "postinstall": "npm run setup-uploads",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
-    "prebuild": "npm run type-check || true"
+    "prebuild": "npm run type-check"
   },
   "overrides": {
     "next-auth": {

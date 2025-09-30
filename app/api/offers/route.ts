@@ -77,14 +77,13 @@ export async function GET(request: NextRequest) {
       query.newCustomerOnly = true;
     }
 
-    const [offers, totalOffers] = await Promise.all([
-      Offer.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Offer.countDocuments(query)
-    ]);
+    // Use sequential execution to avoid TypeScript union type complexity
+    const offers = await Offer.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+    const totalOffers = await Offer.countDocuments(query);
 
     // Get stats
     const [activeCount, expiredCount, totalCount] = await Promise.all([
@@ -94,7 +93,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Add virtual fields manually since we're using lean()
-    const offersWithVirtuals = offers.map(offer => ({
+    const offersWithVirtuals = (offers as any[]).map((offer: any) => ({
       ...offer,
       id: String(offer._id),
       remainingUsage: offer.usageLimit ? Math.max(0, offer.usageLimit - offer.usageCount) : null,
