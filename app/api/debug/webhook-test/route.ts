@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       console.log('👤 Debug: Customer found:', { name: customer.name, email: customer.email });
       
       // Use the simple email approach that we know works
-      const nodemailer = require('nodemailer');
+      const nodemailer = (await import('nodemailer')).default;
       
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
       const mailOptions = {
         from: {
           name: process.env.EMAIL_FROM_NAME || 'E-commerce Store',
-          address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER,
+          address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER || 'noreply@example.com',
         },
         to: customer.email,
         subject: `Order Confirmed - ${pendingOrder.orderNumber}`,
@@ -182,12 +182,12 @@ export async function POST(request: NextRequest) {
       await pendingOrder.save();
       
       console.log('✅ Debug: Confirmation email sent successfully!');
-      console.log('📨 Debug: Message ID:', emailResult.messageId);
+      console.log('📨 Debug: Message ID:', (emailResult as any).messageId);
       
       return createSuccessResponse({
         orderUpdated: true,
         emailSent: true,
-        messageId: emailResult.messageId,
+        messageId: (emailResult as any).messageId,
         order: {
           id: (pendingOrder._id as any).toString(),
           orderNumber: pendingOrder.orderNumber,

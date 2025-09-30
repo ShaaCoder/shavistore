@@ -259,9 +259,9 @@ export async function PATCH(
           
           if (customer && customer.email) {
             // Use the simplified email approach that we know works
-            const nodemailer = require('nodemailer');
-            const fs = require('fs');
-            const path = require('path');
+            const nodemailer = (await import('nodemailer')).default;
+            const fs = await import('fs');
+            const path = await import('path');
             
             const transporter = nodemailer.createTransport({
               host: 'smtp.gmail.com',
@@ -303,7 +303,7 @@ export async function PATCH(
               .replace(/{{unsubscribeUrl}}/g, `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/unsubscribe`);
             
             // Handle items
-            const itemsHtml = order.items.map(item => `
+            const itemsHtml = order.items.map((item: any) => `
               <div class=\"order-item\">\n                <img src=\"${item.image}\" alt=\"${item.name}\" class=\"item-image\">\n                <div class=\"item-details\">\n                  <div class=\"item-name\">${item.name}</div>\n                  ${item.variant ? `<div class=\"item-variant\">${item.variant}</div>` : ''}\n                  <div class=\"item-quantity\">Quantity: ${item.quantity}</div>\n                </div>\n                <div class=\"item-price\">₹${item.price.toFixed(2)}</div>\n              </div>
             `).join('');
             
@@ -314,7 +314,7 @@ export async function PATCH(
             const mailOptions = {
               from: {
                 name: process.env.EMAIL_FROM_NAME || 'E-commerce Store',
-                address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER,
+                address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER || 'noreply@example.com',
               },
               to: customer.email,
               subject: `Order Confirmation - ${order.orderNumber}`,
@@ -336,7 +336,7 @@ export async function PATCH(
             );
             
             console.log('✅ Confirmation email sent successfully for order:', order.orderNumber);
-            console.log('📨 Message ID:', result.messageId);
+            console.log('📨 Message ID:', (result as any).messageId);
           } else {
             console.log('⚠️  No customer email found for order:', order.orderNumber);
           }

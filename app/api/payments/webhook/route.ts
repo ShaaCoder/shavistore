@@ -32,9 +32,9 @@ async function sendOrderConfirmationEmail(order: any) {
     }
     
     // Use the simplified email approach that we know works
-    const nodemailer = require('nodemailer');
-    const fs = require('fs');
-    const path = require('path');
+    const nodemailer = (await import('nodemailer')).default;
+    const fs = await import('fs');
+    const path = await import('path');
     
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
@@ -95,7 +95,7 @@ async function sendOrderConfirmationEmail(order: any) {
     const mailOptions = {
       from: {
         name: process.env.EMAIL_FROM_NAME || 'E-commerce Store',
-        address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER,
+        address: process.env.EMAIL_FROM_ADDRESS || process.env.EMAIL_USER || 'noreply@example.com',
       },
       to: customer.email,
       subject: `Order Confirmation - ${order.orderNumber}`,
@@ -114,7 +114,7 @@ async function sendOrderConfirmationEmail(order: any) {
     });
     
     console.log('✅ Webhook: Confirmation email sent successfully for order:', order.orderNumber);
-    console.log('📨 Webhook: Message ID:', result.messageId);
+    console.log('📨 Webhook: Message ID:', (result as any).messageId);
     
     return true;
   } catch (error) {
