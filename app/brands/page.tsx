@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { headers } from 'next/headers';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 
 // Force this page to be dynamically rendered
 export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 interface Brand {
   id: string;
@@ -46,8 +48,12 @@ interface BrandsResponse {
 
 async function getBrands(): Promise<BrandsResponse> {
   try {
-    // Use a same-origin relative path to avoid relying on env vars in production
-    const res = await fetch(`/api/brands?limit=100`, {
+    // Build absolute same-origin URL using incoming request headers
+    const h = headers();
+    const proto = h.get('x-forwarded-proto') || 'https';
+    const host = h.get('host');
+    const baseUrl = `${proto}://${host}`;
+    const res = await fetch(`${baseUrl}/api/brands?limit=100`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',

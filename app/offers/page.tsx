@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
+import { headers } from 'next/headers';
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,8 @@ export const metadata: Metadata = {
 
 // Force this page to be dynamically rendered
 export const dynamic = 'force-dynamic';
+// Ensure Node.js runtime on Vercel (not Edge) for server-side fetch + Mongoose APIs
+export const runtime = 'nodejs';
 
 interface Offer {
   id: string;
@@ -65,8 +68,12 @@ interface OffersResponse {
 
 async function getOffers(): Promise<OffersResponse> {
   try {
-    // Use same-origin relative URL so it works in both localhost and Vercel
-    const apiUrl = `/api/offers?active=true&limit=50`;
+    // Build absolute same-origin URL from request headers to avoid middleware redirects
+    const h = headers();
+    const proto = h.get('x-forwarded-proto') || 'https';
+    const host = h.get('host');
+    const baseUrl = `${proto}://${host}`;
+    const apiUrl = `${baseUrl}/api/offers?active=true&limit=50`;
     const res = await fetch(apiUrl, {
       cache: 'no-store',
       headers: {
