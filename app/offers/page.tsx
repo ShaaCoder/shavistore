@@ -65,30 +65,32 @@ interface OffersResponse {
 
 async function getOffers(): Promise<OffersResponse> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/offers?active=true&limit=50`,
-      { 
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    // Use same-origin relative URL so it works in both localhost and Vercel
+    const apiUrl = `/api/offers?active=true&limit=50`;
+    const res = await fetch(apiUrl, {
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'NextJS-App-Router',
+      },
+      ...(typeof AbortSignal?.timeout === 'function' ? { signal: AbortSignal.timeout(10000) } : {}),
+    });
 
     if (!res.ok) {
-      throw new Error('Failed to fetch offers');
+      const errorText = await res.text();
+      throw new Error(`Failed to fetch offers: ${res.status} ${res.statusText} - ${errorText}`);
     }
 
-    return res.json();
+    const data = await res.json();
+    return data;
   } catch (error) {
-    console.error('Error fetching offers:', error);
     return {
       data: {
         offers: [],
         stats: { total: 0, active: 0, expired: 0, filtered: 0 }
       },
       success: false,
-      message: 'Failed to load offers'
+      message: `Failed to load offers: ${error instanceof Error ? error.message : 'Unknown error'}`
     };
   }
 }

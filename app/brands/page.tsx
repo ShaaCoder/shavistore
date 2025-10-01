@@ -46,7 +46,8 @@ interface BrandsResponse {
 
 async function getBrands(): Promise<BrandsResponse> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/brands?limit=100`, {
+    // Use a same-origin relative path to avoid relying on env vars in production
+    const res = await fetch(`/api/brands?limit=100`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',

@@ -17,7 +17,9 @@ import { offerValidation, formatValidationErrors } from '@/lib/validations';
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('📊 Offers API: Starting request');
     await connectDB();
+    console.log('📊 Offers API: Database connected');
 
     // Rate limiting
     const clientIP = getClientIP(request);
@@ -78,19 +80,33 @@ export async function GET(request: NextRequest) {
     }
 
     // Use sequential execution to avoid TypeScript union type complexity
+    console.log('📊 Offers API: Executing query:', JSON.stringify(query));
     const offers = await Offer.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean() as any[];
     const totalOffers = await Offer.countDocuments(query);
+    console.log(`📊 Offers API: Found ${offers.length} offers`);
 
-    // Get stats
-    const [activeCount, expiredCount, totalCount] = await Promise.all([
-      (Offer as any).findActive().countDocuments() as Promise<number>,
-      Offer.countDocuments({ isActive: false }) as Promise<number>,
-      Offer.countDocuments() as Promise<number>
-    ]);
+    // Get stats with better error handling
+    let activeCount = 0;
+    let expiredCount = 0;
+    let totalCount = 0;
+    
+    try {
+      const [activeResult, expiredResult, totalResult] = await Promise.all([
+        (Offer as any).findActive().countDocuments(),
+        Offer.countDocuments({ isActive: false }),
+        Offer.countDocuments()
+      ]);
+      activeCount = activeResult;
+      expiredCount = expiredResult;
+      totalCount = totalResult;
+    } catch (statsError) {
+      console.error('Error getting offer stats:', statsError);
+      // Continue with default values
+    }
 
     // Add virtual fields manually since we're using lean()
     const offersWithVirtuals = (offers as any[]).map((offer: any) => ({
@@ -114,6 +130,8 @@ export async function GET(request: NextRequest) {
     }, 'Offers retrieved successfully', pagination);
 
   } catch (error) {
+    console.error('❌ Offers API: Error occurred:', error);
+    console.error('❌ Offers API: Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
     return handleApiError(error, 'GET /api/offers');
   }
 }
